@@ -1,0 +1,41 @@
+# Force HTTPS
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# Enable HSTS (HTTP Strict Transport Security)
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+# Prevent MIME Sniffing
+Header always set X-Content-Type-Options "nosniff"
+
+# Enable XSS Protection
+Header always set X-XSS-Protection "1; mode=block"
+
+# Enable Content Security Policy (CSP)
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+
+# Enable Referrer Policy
+Header always set Referrer-Policy "no-referrer-when-downgrade"
+
+# Enable Feature Policy (optional)
+Header always set Feature-Policy "camera 'none'; microphone 'none';"
+
+# Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+# Image Caching (adjust expiration as needed)
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+</IfModule>
+
+# Disable directory browsing
+Options -Indexes
